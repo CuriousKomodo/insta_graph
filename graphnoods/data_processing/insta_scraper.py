@@ -2,6 +2,7 @@ import json
 import os
 import urllib.request
 
+import PIL
 import requests
 from bs4 import BeautifulSoup as bs
 from PIL import Image
@@ -27,7 +28,7 @@ class InstagramScraper:
         self.ins_explore_url = 'https://www.instagram.com/explore'
         self.image_save_path = './'
 
-    def extract_links_of_instagram_photos_by_tag(self, hashtag='food'):
+    def extract_links_of_posts_by_tag(self, hashtag='food'):
         self.webdriver.get(os.path.join(self.ins_explore_url, 'tags', hashtag))
 
         if self.scroll_time:
@@ -51,14 +52,23 @@ class InstagramScraper:
 
     def save_images_by_url(self, list_url_shortcodes, image_save_path='./'):
         for short_code in list_url_shortcodes:
-            image_url = os.path.join(self.ins_explore_url, 'p', short_code)
-            r = requests.get(image_url)
-            with open(image_save_path + ".jpg", 'wb') as f:
-                r.raw.decode_content = True
-                f.write(r.content)
+            image_url = os.path.join(self.ins_explore_url, 'p', short_code, 'media/?size=m')
+            try:
+                image = Image.open(requests.get(image_url, stream=True).raw)
+                image.save(os.path.join(image_save_path + "{}.jpg".format(short_code)))
+            except PIL.UnidentifiedImageError:
+                print('Cannot load image for shortcode:{}'.format(short_code))
 
-    def display_images_from_short_code(self, short_code):
-        image_url = os.path.join(self.ins_explore_url, 'p', short_code)
+
+    def scrap_caption_by_url(self):
+        pass
+
+    def scrap_hashtags_by_url(self):
+        pass
+
+    def display_images_from_short_code(self, short_code, size='m'):
+        assert size in ['s','m','l']
+        image_url = os.path.join(self.ins_explore_url, 'p', short_code, 'media/?size={}'.format())
         image = Image.open(urllib.request.urlopen(image_url))
         image.show()
 
@@ -69,7 +79,7 @@ class InstagramScraper:
 
 if __name__ == '__main__':
     root_logger = initialise_logger()
-    hashtag = 'noodles'
+    hashtag = 'food'
     ins_scraper = InstagramScraper(config=WebdriverConfig())
-    url_shortcodes = ins_scraper.extract_links_of_instagram_photos_by_tag(hashtag)
+    url_shortcodes = ins_scraper.extract_links_of_posts_by_tag(hashtag)
     ins_scraper.display_images_from_short_code(url_shortcodes[0])

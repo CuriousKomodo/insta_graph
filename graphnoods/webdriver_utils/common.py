@@ -11,6 +11,7 @@ def timed_scroll(webdriver, scroll_time, _scroll_pause_time=2):
         # Get scroll height
         last_height = driver.execute_script("return document.body.scrollHeight")
 
+        num_scrolls = 0
         while True:
             # Scroll down to bottom
             driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
@@ -20,9 +21,12 @@ def timed_scroll(webdriver, scroll_time, _scroll_pause_time=2):
 
             # Calculate new scroll height and compare with last scroll height
             new_height = driver.execute_script("return document.body.scrollHeight")
-
+            print('new height', new_height)
+            num_scrolls+=1
             if new_height == last_height:
                 # If heights are the same it will exit the function
+                break
+            if num_scrolls > 5:
                 break
             last_height = new_height
 
