@@ -20,6 +20,6 @@ lxml==4.4.1
 hjson==3.0.1
 rfc5424-logging-handler==1.4.3
 PyYAML==5.3
-pytest==5.4.1
+pytest==9.0.3
 html-parser==0.2
 Keras==2.3.1
