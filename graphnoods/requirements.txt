@@ -22,4 +22,4 @@ rfc5424-logging-handler==1.4.3
 PyYAML==5.3
 pytest==5.4.1
 html-parser==0.2
-Keras==2.3.1
+Keras==3.13.2
